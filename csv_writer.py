@@ -5,16 +5,19 @@ DATA_DIR = Path(__file__).parent / "data"
 DATA_DIR.mkdir(exist_ok=True)
 
 
-def write_csv(filename: str, fieldnames: list[str], rows: list[dict]) -> None:
+def append_csv(filename: str, fieldnames: list[str], rows: list[dict]) -> None:
     """
-    Write a list of dictionaries to a CSV file in ./data.
-    Overwrites existing file.
+    Append rows to a CSV file. Creates it if missing.
     """
     path = DATA_DIR / filename
+    file_exists = path.exists()
 
-    with open(path, "w", newline="", encoding="utf-8") as f:
+    with open(path, "a", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
+
+        if not file_exists:
+            writer.writeheader()
+
         writer.writerows(rows)
 
-    print(f"[OK] Wrote {len(rows)} rows → {path}")
+    print(f"[OK] Appended {len(rows)} rows → {path}")
